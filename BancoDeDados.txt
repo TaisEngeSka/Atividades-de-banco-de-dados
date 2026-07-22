@@ -3,9 +3,9 @@ create database "AtividadeTaisOne";
 create table tb_usuario(
 	id_usuario serial primary key,
 	tx_nome varchar(200),
-	nr_telefone numeric(11,0),
-	tx_senha varchar(200),
-	tx_email varchar(200),
+	nr_telefone numeric(11,0), default 55555555555 torna este um  valor padrão, ou seja enquanto não alterar este vai ser o padrão. 
+	tx_senha varchar(200), 
+	tx_email varchar(200),  not null, // torna o valor obrigatório 
 	dt_cadastro timestamp
 );
 
@@ -25,3 +25,4 @@ create table tb_paciente(
 	vl_peso numeric (5,2),
 	vl_idade numeric (5,2)
 );
+

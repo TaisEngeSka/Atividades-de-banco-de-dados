@@ -1,0 +1,47 @@
+create table tb_calculadora(
+	id_calculadora serial primary key,
+	vl_valor numeric (18,2) not null,
+	tx_operacao varchar (1)not null,
+	dt_cadastro timestamp default current_date 
+);
+
+select * from tb_calculadora;
+select SUM(vl_valor) as valorTotal from tb_calculadora where tx_operacao = '+';
+
+
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (47, '+');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (4677, '.');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (256, '/');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (434, '*');
+
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (4557, '+');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (4566677, '.');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (2556656, '/');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (656434, '*');
+
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (677, '+');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (6767, '.');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (265756, '/');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (7675, '*');
+insert into tb_calculadora (vl_valor,tx_operacao)
+
+values (7899, '+');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (787, '.');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (7897, '/');
+insert into tb_calculadora (vl_valor,tx_operacao)
+values (0988, '*');
+
