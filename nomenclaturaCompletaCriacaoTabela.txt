@@ -1,0 +1,40 @@
+create table tb_aluno (
+	id_aluno serial, 
+	tx_nome varchar(255),
+	tx_email varchar (255),
+	nr_numero numeric (18,0),
+
+	constraint pk_tb_aluno primary key (id_aluno)
+);
+
+create table tb_professor (
+	id_professor serial, 
+	tx_nome varchar(255),
+	tx_email varchar (255),
+	nr_numero numeric (18,0),
+
+	constraint pk_tb_professor primary key (id_professor)
+);
+
+create table tb_diciplina (
+	id_diciplina serial, 
+	tx_materia varchar(255),
+	vl_duracao numeric (18,1),
+	cd_professor integer,
+
+	constraint pk_tb_diciplina primary key (id_diciplina),
+	constraint fk_tb_professor foreign key (cd_professor) references tb_professor (id_professor) 
+);
+
+create table tb_nota (
+	id_nota serial, 
+	vl_valor numeric (18,1),
+	cd_diciplina integer,
+	cd_aluno integer,
+
+	constraint pk_tb_nota primary key (id_nota),
+	constraint fk_tb_diciplina foreign key (cd_diciplina) references tb_diciplina (id_diciplina),
+	constraint fk_tb_aluno foreign key (cd_aluno) references tb_aluno (id_aluno) 
+);
+
+	select * from tb_nota
