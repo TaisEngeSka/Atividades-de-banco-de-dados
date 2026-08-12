@@ -47,3 +47,6 @@ insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
 values ('johny', 'jojonhyds@ggdsjgd', 'nicojohny333', 1);
 
 select * from tb_usuarioTipados;
+
+insert into tb_tipo (tx_descricao)
+values ('aleatorio');
