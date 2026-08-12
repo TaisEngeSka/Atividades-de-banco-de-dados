@@ -1,0 +1,49 @@
+create table tb_tipo(
+	id_tipo serial,
+	tx_descricao varchar (255),
+
+	constraint fk_tb_tipo primary key (id_tipo)
+);
+
+create table tb_usuarioTipados (
+	id_usuarioTipados serial,
+	tx_nome varchar (255),
+	tx_email varchar (255),
+	tx_senha varchar (255),
+	cd_tipo integer,
+
+	constraint pk_tb_usuarioTipados primary key (id_usuarioTipados),
+	constraint fk_tb_tipo foreign key (cd_tipo) references tb_tipo (id_tipo)
+);
+
+insert into tb_usuarioTipados (tx_descricao)
+values ('administrador');
+insert into tb_tipo (tx_descricao)
+values ('cliente');
+insert into tb_tipo (tx_descricao)
+values ('fornecedor');
+
+select * from tb_tipo;
+
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('jose', 'josezinho@ggdsjgd', 'jujuba45', 2);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('maria', 'mariazinha@ggdsjgd', 'gororobs32', 2);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('gabriel', 'gabrriel@ggdsjgd', 'gabbielo433', 2);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('joana', 'joanasdf@ggdsjgd', 'joanaas', 2);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('rafael', 'rafinh4@ggdsjgd', 'rarafafa221', 3);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('giovana', 'gigiovana@ggdsjgd', 'giovvida3', 3);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('carlos', 'carrolos@ggdsjgd', 'buzinadocarrolos', 3);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('estevão', 'estevaosaude@ggdsjgd', 'atchim32k3', 1);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('marisa', 'marisiaflor@ggdsjgd', 'isamarmar8', 1);
+insert into tb_usuarioTipados (tx_nome, tx_email, tx_senha, cd_tipo)
+values ('johny', 'jojonhyds@ggdsjgd', 'nicojohny333', 1);
+
+select * from tb_usuarioTipados;
