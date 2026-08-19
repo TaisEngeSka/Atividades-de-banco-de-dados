@@ -1,0 +1,45 @@
+select * from tb_disciplina, tb_professor;
+
+select * 
+from  tb_professor 
+inner join tb_disciplina 
+on tb_disciplina.cd_professor = tb_professor.id_professor;
+
+select * 
+from  tb_curso  
+inner join tb_aluno 
+on tb_aluno.cd_curso = tb_curso.id_curso;
+
+select tb_aluno.tx_nome, tb_nota.vl_nota_1, tb_nota.vl_nota_2, tb_nota.vl_nota_3, tb_curso.tx_nome 
+from   tb_curso 
+inner join tb_aluno 
+on tb_aluno.cd_curso = tb_curso.id_curso
+inner join tb_matricula
+on tb_matricula.cd_aluno = tb_aluno.id_aluno
+inner join tb_nota 
+on tb_nota.cd_matricula = tb_matricula.id_matricula;
+
+select tb_aluno.tx_nome, tb_nota.vl_nota_1, tb_nota.vl_nota_2, tb_nota.vl_nota_3, tb_curso.tx_nome 
+from   tb_curso 
+inner join tb_aluno 
+on tb_aluno.cd_curso = tb_curso.id_curso
+inner join tb_matricula
+on tb_matricula.cd_aluno = tb_aluno.id_aluno
+inner join tb_nota 
+on tb_nota.cd_matricula = tb_matricula.id_matricula
+where 
+tb_nota.vl_nota_1 >= 9 and 
+tb_nota.vl_nota_2  > 8;
+
+select tb_aluno.tx_nome, tb_nota.vl_nota_1, tb_nota.vl_nota_2, tb_nota.vl_nota_3, tb_curso.tx_nome 
+from   tb_curso 
+inner join tb_aluno 
+on tb_aluno.cd_curso = tb_curso.id_curso
+inner join tb_matricula
+on tb_matricula.cd_aluno = tb_aluno.id_aluno
+inner join tb_nota 
+on tb_nota.cd_matricula = tb_matricula.id_matricula
+where 
+(tb_curso.id_curso = 2
+or tb_curso.id_curso = 4);
+
