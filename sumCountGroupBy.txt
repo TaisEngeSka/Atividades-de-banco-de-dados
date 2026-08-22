@@ -1,0 +1,72 @@
+1/
+select * from tb_aluno
+order by tx_cidade asc;
+
+2/
+select tb_aluno.tx_nome, tb_nota.vl_nota
+	from tb_aluno 
+inner join tb_matricula
+	on tb_matricula.id_aluno = tb_aluno.id_aluno
+inner join tb_nota 
+	on tb_nota.id_matricula = tb_matricula.id_matricula
+where vl_nota < 5
+order by vl_nota asc;
+
+3/
+select tx_nome, tx_cidade from tb_aluno
+order by tx_cidade asc;
+
+4/
+select * from tb_turma 
+left join tb_matricula
+	on tb_matricula.id_turma = tb_turma.id_turma 
+left join tb_nota
+	on tb_nota.id_matricula = tb_matricula.id_matricula
+where id_nota is null
+
+5/
+select * from tb_aluno
+left join tb_matricula 
+	on tb_matricula.id_aluno = tb_aluno.id_aluno
+where id_matricula is null
+order by tx_nome asc;
+
+6/
+select tx_nome 	
+	from tb_aluno 
+where upper (tx_cidade) = upper('Chapecó');
+
+7/
+select tb_aluno.tx_nome, tb_disciplina.tx_nome, tb_nota.vl_nota 
+	from tb_aluno 
+inner join tb_matricula
+	on tb_matricula.id_turma = tb_aluno.id_aluno
+inner join tb_nota
+	on tb_nota.id_matricula = tb_matricula.id_matricula
+inner join tb_disciplina
+	on tb_nota.id_disciplina = tb_disciplina.id_disciplina
+where vl_nota = 5 or vl_nota =3 or vl_nota =7 or vl_nota =9;
+
+count --> conta quantas linhas tem 
+sum --> soma os valores de todas as casas
+group by --> agrupa o que é igual em sub grupos  
+
+8/
+
+
+9/
+select count(tx_nome), tx_cidade from tb_aluno
+group by (tx_cidade);
+
+10/ 
+select count (),  
+	from tb_professor p
+inner join tb_disciplina d
+	on d.id_professor = p.id_professor 
+inner join tb_nota n
+	on n.id_disciplina = d.id_disciplina
+inner join tb_matricula m
+	on n.id_matricula = m.id_matricula
+inner join tb_aluno a
+	on m.id_aluno = a.id_aluno
+group by ()
