@@ -1,0 +1,81 @@
+--> 1
+
+select tp.tx_nome, tp.vl_preco, tc.tx_nome, tc.tx_descricao   from tb_produto tp 
+inner join tb_categoria tc 
+on tp.cd_categoria = tc.id_categoria 
+where fl_ativo = true and vl_preco between 500 and 1000;
+
+--> 2
+
+select tx_nome, tx_cpf, tx_email from tb_cliente tc 
+where UPPER(tc.tx_estado)  in (upper('SC'), upper('PR'))
+order by tx_nome asc;
+
+--> 3 
+
+select 
+	tx_nome as nomeUsuario,
+	nr_idade as idadeUsuario
+from 
+	tb_cliente tc 
+where nr_idade > 50 or tx_email is null;
+
+--> 4 
+
+select 
+	prod.tx_nome as nomeProduto,
+	prod.vl_preco as valorProduto,
+	fo.tx_nome as nomeFornecedor,
+	cat.tx_descricao as descricaoProduto 
+from 
+	tb_produto prod
+inner join tb_fornecedor fo
+	on fo.id_fornecedor = prod.cd_fornecedor 
+inner join tb_categoria cat
+	on cat.id_categoria = prod.cd_categoria 
+where prod.fl_ativo = true 
+order by prod.vl_preco desc;
+
+--> 5 
+
+select
+	count(id_venda) as totalVendas,
+	cli.tx_nome,
+	cli.tx_cidade 
+from 
+	tb_cliente cli
+left join tb_venda ven
+	on cli.id_cliente = ven.cd_cliente 
+group by 
+	cli.tx_nome,
+	cli.tx_cidade 
+order by 
+
+--> 6
+
+select 
+	cat.tx_nome, cat.tx_descricao 
+from 
+	tb_categoria cat 
+right  join tb_produto prod 
+	on cat.id_categoria = prod.cd_categoria
+where prod.cd_categoria is null
+order by cat.tx_nome asc;
+
+
+--> 7
+
+select
+	sum(item.vl_unitario * item.nr_quantidade ) as total,
+	cli.tx_nome
+from
+	tb_cliente cli
+left join tb_venda ven
+	on cli.id_cliente = ven.cd_cliente 
+inner join  tb_item_venda item
+	on item.cd_venda = ven.id_venda  
+group by 
+	cli.tx_nome
+
+
+
