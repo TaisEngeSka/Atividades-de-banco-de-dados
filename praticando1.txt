@@ -1,0 +1,100 @@
+--> 1 
+
+select 
+	cliente.tx_nome,
+	endereco.tx_cidade,
+	endereco.tx_estado,
+	email.tx_contato as email,
+	celular.tx_contato as celular,
+	telefone.tx_contato as telefone
+from 
+	tb_cliente cliente 
+left join tb_endereco endereco 
+	on endereco.id_endereco = cliente.cd_endereco
+left join tb_contato email 
+	on email.cd_cliente = cliente.id_cliente and email.cd_tipo_contato = 1
+left join tb_contato celular 
+	on celular.cd_cliente = cliente.id_cliente and celular.cd_tipo_contato = 2
+left join tb_contato telefone 
+	on telefone.cd_cliente = cliente.id_cliente and telefone.cd_tipo_contato = 3
+
+--> 2
+	
+select 
+	cliente.tx_nome,
+	email.tx_contato as email
+from 
+	tb_cliente cliente 
+left join tb_contato email 
+	on email.cd_cliente = cliente.id_cliente and email.cd_tipo_contato = 1 and email.fl_principal = true
+order by cliente.tx_nome asc;
+
+--> 3
+
+select 
+	cliente.tx_nome,
+	avaliacao.tx_comentario,
+	produto.tx_descricao,
+	avaliacao.nr_nota 
+from 
+	tb_cliente cliente
+inner join tb_avaliacao avaliacao
+	on cliente.id_cliente = avaliacao.cd_cliente
+inner join tb_produto produto 
+	on avaliacao.cd_produto = produto.id_produto;
+
+--> 4
+
+select 
+	tx_nome,
+	nr_idade 
+from
+	tb_cliente 
+where 
+	nr_idade > (
+	select 
+		sum(nr_idade) / count (id_cliente) as media
+	from 
+		tb_cliente);
+
+ ou 
+ 
+ 
+select 
+	tx_nome,
+	nr_idade 
+from
+	tb_cliente 
+where 
+	nr_idade > (
+	select 
+		avg(nr_idade ) as media
+	from 
+		tb_cliente);
+
+
+ --> 5
+
+select 
+	tipo.tx_descricao ,
+	count(contato.cd_cliente )
+from 
+	tb_contato contato 
+	inner join tb_tipo_contato tipo on tipo.id_tipo_contato  = contato.cd_tipo_contato 
+group by tipo.tx_descricao;
+
+--> 6
+
+select 
+	cliente.tx_nome,
+	venda.dt_venda
+from 
+	tb_cliente cliente 
+inner join tb_venda venda 
+	on cliente.id_cliente = venda.cd_cliente
+where upper(venda.tx_status) = upper ('pago');
+
+
+
+
+
