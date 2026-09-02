@@ -138,3 +138,64 @@ where
 	and 
 	receitaBruta.receita > 1000
 order by receitaBruta.receita desc
+
+--> 8
+ 
+select 
+	* 
+from 
+	tb_cliente cliente
+where upper (tx_nome) like upper ('A%') or upper(tx_nome) like upper ('%O');
+
+--> 9
+
+with vendas as (
+select
+	cd_cliente,
+	sum(item.nr_quantidade * item.vl_unitario ) as valor
+from 
+	tb_venda
+inner join tb_item_venda item 
+	on item.cd_venda = id_venda
+where
+	upper(tx_status) = 'PAGO'
+group by
+	cd_cliente
+), media as (
+select
+	sum(valor) / count(distinct cd_cliente) as mediaa 
+from 
+	vendas
+)
+select 
+	* 
+from 
+	tb_cliente
+inner join vendas on cd_cliente = id_cliente
+inner join media on valor > mediaa
+
+--> 10 
+
+with media as (
+select 
+	  sum(nr_estoque) / count (nr_estoque) as media,
+	  sum(nr_estoque) as estoque,
+	  cd_categoria
+from 
+	tb_produto  
+group by
+	cd_categoria
+), diferenca as (
+select nr_estoque from tb_produto
+)
+select 
+	tx_nome, 
+	produto.cd_categoria,
+	estoque,
+	media,
+	diferenca
+from 
+	tb_produto produto
+inner join media  on estoque < media.media and media.cd_categoria = produto.cd_categoria 
+inner join diferenca on 
+
