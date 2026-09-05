@@ -1,0 +1,97 @@
+-- conteúdo novo alteração de tabelas 
+
+ALTER TABLE tal ADD COLUMN -- Cria uma nova coluna;
+ALTER TABLE tal DROP COLUMN -- Remove/apaga  uma coluna;
+ALTER TABLE tal ALTER COLUMN -- Modifica/edita uma coluna existe;
+ALTER TABLE tal RENAME COLUMN -- Renomeia uma coluna;
+ALTER TABLE tal ADD CONSTRAINT -- Adiciona uma nova regra (Unique, CHECK, FK, PK etc..); 
+
+ALTER TABLE atividade ADD COLUMN    tx_telefone VARCHAR(20);
+ALTER TABLE atividade DROP COLUMN   nr_idade;
+ALTER TABLE atividade ALTER COLUMN  tx_nome TYPE VARCHAR(200);
+ALTER TABLE atividade RENAME COLUMN tx_email TO tx_email_contato;
+
+ALTER TABLE atividade ADD CONSTRAINT pk_usuario PRIMARY KEY  (id_usuario); -- nova regra 
+	--  define id_usuario como chave primária (Primary Key) da tabela
+ALTER TABLE atividade ADD CONSTRAINT fk_atividade_usuario 
+	FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario); -- nova regra 
+	-- define id_usuario como chave estrangeira (Foreign Key), relacionando atividade com usuario
+ALTER TABLE usuario ADD CONSTRAINT uq_usuario_username
+	UNIQUE (tx_username); -- nova regra garante que o username não possa ser repetido 
+	--na tabela
+ALTER TABLE venda ADD CONSTRAINT ck_venda_status 
+	CHECK (tx_status IN ('PAGO', 'PENDENTE', 'CANCELADO')); -- nova regra permite apenas 
+	-- os valores PAGO, PENDENTE ou CANCELADO na coluna tx_status
+ALTER TABLE atividade DROP CONSTRAINT fk_atividade_usuario; -- remove a regra/constraint
+	-- chamada fk_atividade_usuario
+
+select * from atividade; 
+
+alter table atividade 
+	add column nr_idade numeric (18,0);
+
+alter table atividade 
+	drop column nr_idade;
+
+-- 1 
+
+select * from tb_produto; 
+
+alter table tb_produto 
+	add column vl_peso numeric (18,3);
+
+-- 2 
+
+select * from tb_cliente;
+
+alter table tb_cliente 
+	add column tx_cnpj varchar (255);
+
+
+
+------------UPDATE — alterando dados ------------------
+
+--Um UPDATE sem WHERE altera todas as linhas da tabela — sem aviso e sem desfazer.
+--Antes de rodar um UPDATE em produção, teste primeiro com um SELECT
+-- usando o mesmo WHERE.
+
+UPDATE tb_usuarios 
+	SET nr_idade = 29 -- set --> buscar 
+	WHERE tx_email = 'ana@email.com'; -- where é obrigatório sem ele 
+	-- todos os produtos novos rebem o valor 
+
+select * from atividade
+	
+update atividade 
+	 set nr_idade = 35
+	 where  nome =  'Ana Souza';
+
+-- 1 
+
+select id_produto, vl_preco, vl_peso  from tb_produto; 
+
+update tb_produto 
+	 set vl_peso = (id_produto * vl_preco);
+	 
+-- 2 
+
+select * from tb_produto;
+
+alter table tb_produto 
+	add column tx_categoria varchar (255);
+
+-- 3
+
+update tb_produto produto
+	 set tx_categoria = 
+	 	(select tx_descricao from tb_categoria 
+		where produto.cd_categoria = tb_categoria.id_categoria);
+	
+select tx_categoria from tb_produto;
+
+
+-- exemplo de delete
+
+delete from atividade where upper(nome)= upper ('eva costa');
+
+select nome from atividade;

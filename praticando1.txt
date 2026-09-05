@@ -202,7 +202,58 @@ inner join tb_categoria categoria
 
 -- 11 
 
-create table atividade
+with compras as (
+select 
+	COUNT(distinct id_venda) as total_compras,
+	SUM(item.nr_quantidade * item.vl_unitario) as total_gasto,
+	 MIN(venda.dt_venda) as primeira_compra,
+	 MAX(venda.dt_venda) as ultima_compra,
+	cd_cliente
+from 
+	tb_venda venda
+inner join tb_item_venda item 
+	on item.cd_venda = venda.id_venda
+where tx_status = 'PAGO' 
+group by cd_cliente
+)
+select 
+	cliente.tx_nome as nome,
+	endereco.tx_cidade as cidade,
+	compras.total_compras,
+	compras.total_gasto,
+	compras.primeira_compra,
+	compras.ultima_compra,
+	(
+	select
+		produto.tx_nome
+	from
+		tb_produto produto 
+	inner join tb_item_venda item on item.cd_produto = produto.id_produto 
+	inner join tb_venda venda on venda.id_venda = item.cd_venda 
+	where
+		venda.tx_status = 'PAGO' and venda.cd_cliente  = cliente.id_cliente
+		group by produto.id_produto, produto.tx_nome
+	order by sum(item.nr_quantidade ) desc
+	limit 1
+		) as produto_favorito,
+	CASE
+        WHEN total_compras < 1  THEN 'CLIENTE PEQUENO'
+        WHEN total_compras = 1 THEN 'CLIENTE MEDIO'
+        WHEN total_compras = 2 THEN 'CLIENTE GRANDE'
+        ELSE                      'OUTRO'
+    END AS status_cliente
+from 
+	tb_cliente cliente 
+inner join 
+	tb_endereco endereco 
+	on cliente.cd_endereco  = endereco.id_endereco 
+inner join 
+	compras 
+	on compras.cd_cliente = cliente.id_cliente;
+
+-- 12 
+
+create table atividade2
 as (
 with compras as (
 select 
@@ -225,12 +276,6 @@ select
 	compras.total_gasto,
 	compras.primeira_compra,
 	compras.ultima_compra,
-	CASE
-        WHEN total_compras < 1  THEN 'CLIENTE PEQUENO'
-        WHEN total_compras = 1 THEN 'CLIENTE MEDIO'
-        WHEN total_compras = 2 THEN 'CLIENTE GRANDE'
-        ELSE                      'OUTRO'
-    END AS status_cliente,
 	(
 	select
 		produto.tx_nome
@@ -243,7 +288,13 @@ select
 		group by produto.id_produto, produto.tx_nome
 	order by sum(item.nr_quantidade ) desc
 	limit 1
-		)
+		) as produto_favorito,
+	CASE
+        WHEN total_compras < 1  THEN 'CLIENTE PEQUENO'
+        WHEN total_compras = 1 THEN 'CLIENTE MEDIO'
+        WHEN total_compras = 2 THEN 'CLIENTE GRANDE'
+        ELSE                      'OUTRO'
+    END AS status_cliente
 from 
 	tb_cliente cliente 
 inner join 
@@ -253,3 +304,5 @@ inner join
 	compras 
 	on compras.cd_cliente = cliente.id_cliente 
 );
+
+select * from atividade2;
