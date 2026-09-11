@@ -1,0 +1,66 @@
+-- 10/09/2026
+
+-- 1 
+update tb_produto 
+	set vl_preco = 1234.56 
+	where id_produto = 1;
+
+-- 2 
+update tb_produto 
+	set vl_preco = (vl_preco * 1.10)
+	where  id_produto = 2;
+
+-- 3 
+update tb_produto 
+	set nr_estoque = (nr_estoque - 5)
+	where id_produto = 1;
+
+select * from tb_produto tp 
+
+-- 4 
+delete from tb_pedido 
+ where id_pedido = 9;
+
+-- 5
+ delete from tb_pedido 
+ 	where nr_quantidade  < 3 and dt_pedido < '2024-02-01';
+
+select * from tb_pedido
+
+select * from tb_categoria tc 
+
+select * from tb_produto tc 
+
+-- 6 
+ select 
+	tc.tx_nome, 
+	count(tp.cd_categoria) as quantidade  
+from  
+	tb_produto tp 
+inner join  
+	tb_categoria tc 
+	on tc.id_categoria = tp.cd_categoria and tp.fl_ativo = true 
+group by 
+	tc.tx_nome
+
+-- 7
+select 
+	tc.tx_nome, 
+	count(tp.cd_categoria) as quantidade  
+from  
+	tb_produto tp 
+inner join  
+	tb_categoria tc 
+	on tc.id_categoria = tp.cd_categoria 
+group by 
+	tc.tx_nome  
+having 
+	count(tp.cd_categoria) > 2;
+
+-- WHERE → filtra os registros antes do GROUP BY.
+
+-- HAVING → filtra os resultados depois do GROUP BY, 
+-- podendo usar COUNT(), SUM(), AVG(), etc.
+
+
+
