@@ -1,0 +1,74 @@
+-- 15/09/26
+
+-- 1 
+
+select 
+	categoria.tx_nome,
+	max(produto.vl_preco) as maximo,
+	min (produto.vl_preco) as minimo
+from 
+	tb_categoria categoria 
+inner join 
+	tb_produto produto 
+on produto.cd_categoria = categoria.id_categoria 
+group by categoria.tx_nome;
+
+select tx_nome from tb_categoria;
+
+-- 2 
+
+select 
+	prod.tx_nome, 
+	sum(pedi.nr_quantidade * prod.vl_preco) as total
+from 
+	tb_produto prod
+inner join 
+	tb_pedido pedi
+on 
+	pedi.cd_produto = prod.id_produto 
+group by 
+	prod.tx_nome
+order by 
+	total desc ;
+
+-- 3 
+
+alter table 
+	tb_produto 
+add column 
+	  cd_cliente integer;
+	
+
+alter table tb_produto
+add constraint cliente_fk
+foreign key  (cd_cliente)
+references tb_cliente (id_cliente);
+
+
+	 
+
+-- aula que faltei 
+
+-- 8
+
+create table tb_cliente (
+id_cliente serial not null PRIMARY KEY,
+tx_unidfed varchar (255) check ( tx_unidfed = upper (tx_unidfed)),
+tx_nome varchar (255),
+nr_idade NUMERIC(18,0) NOT null check( nr_idade > 0 )
+);
+
+
+INSERT INTO tb_cliente (id_cliente, tx_unidfed, tx_nome, nr_idade)
+VALUES
+(1, 'PR', 'Lau Mota', 25),
+(2, 'SC', 'Marcos Dias', 37),
+(3, 'SP', 'Rosana Freitas', 80);
+
+select * from tb_cliente;
+
+--9
+
+alter table tb_pedido
+add column cd_cliente integer references
+tb_cliente(id_cliente);
