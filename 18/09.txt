@@ -1,0 +1,53 @@
+-- 18/09 
+-- atividades enquanto os outros fazem recuperação 
+
+-- 1
+
+select 
+	prod.tx_nome,
+	sum(pedi.nr_quantidade) quantidade_total 
+from 
+	tb_produto prod
+inner join tb_pedido pedi
+on prod.id_produto = pedi.cd_produto 
+where 
+	prod.cd_categoria = 1
+group by
+	prod.tx_nome
+having 
+	sum(pedi.nr_quantidade) >= 3;
+	
+select * from  tb_pedido pedi
+inner join tb_produto prod
+on prod.id_produto = pedi.cd_produto 
+where cd_categoria = 1
+
+-- 2
+ 
+with venda as (
+select 
+	sum(pedi.nr_quantidade) as total_pedido,
+	sum(pedi.nr_quantidade * prod.vl_preco) as valor_total,
+	cd_produto
+from 
+	tb_pedido pedi
+inner join tb_produto prod
+on prod.id_produto = pedi.cd_produto 
+group by cd_produto
+)
+select 
+	prod.tx_nome,
+	total_pedido, 
+	valor_total 
+from 
+	tb_produto prod 
+inner join venda 
+on venda.cd_produto = prod.id_produto 
+order by valor_total desc
+	
+	
+	
+	
+	
+	
+	
