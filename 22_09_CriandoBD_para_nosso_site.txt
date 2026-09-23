@@ -1,0 +1,300 @@
+create table tb_tipoUser(
+id_tipoUser serial primary key,
+tx_descricao varchar(255)
+);
+
+create table tb_usuario (
+id_usuario serial primary key,
+cd_tipoUser integer references tb_tipoUser (id_tipoUser),
+tx_nome varchar (255) not null,
+tx_userName varchar (255) unique not null,
+tx_senha varchar(255) not null,
+tx_email varchar (255),
+nr_telefone numeric (11,0),
+dt_criacao timestamp default now()
+);
+
+create table tb_animal (
+id_animal serial primary key,
+tx_descricao varchar (255)
+);
+
+create table tb_pet (
+id_pet serial primary key,
+cd_usuario integer references tb_usuario (id_usuario),
+cd_animal integer references tb_animal (id_animal),
+tx_raca varchar (255),
+tx_nome varchar (255) not null,
+tx_sexo varchar (1) not null,
+vl_idade numeric (3,2), 
+vl_pesoKg numeric (3,3)
+);
+
+create table tb_categoriaProduto (
+id_categoriaProduto serial primary key,
+tx_categoria varchar (255)
+);
+
+create table tb_produto (
+id_produto serial primary key,
+cd_animal integer references tb_animal(id_animal) not null,
+cd_categoria integer references tb_categoriaProduto(id_categoriaProduto) not null,
+tx_nome varchar (255) not null,
+tx_dscricao varchar(255) not null,
+vl_valor numeric (5,2) not null,
+nr_estoque integer
+);
+
+create table tb_servico (
+id_servico serial primary key,
+tx_servico varchar (255),
+vl_valor numeric (5,2),
+cd_pet integer references tb_pet (id_pet),
+cd_usuario integer references tb_usuario (id_usuario)
+);
+
+create table tb_venda (
+id_venda serial primary key,
+cd_usuario integer references tb_usuario (id_usuario),
+cd_produto integer references tb_produto(id_produto),
+cd_servico integer references tb_servico (id_servico),
+vl_total numeric (5,2),
+nr_quantidade integer,
+dt_compra timestamp default now()
+);
+
+
+
+inserts 
+
+
+
+ALTER TABLE tb_pet
+ALTER COLUMN vl_pesoKg TYPE numeric(6,3);
+
+INSERT INTO tb_tipoUser (tx_descricao) VALUES
+('Administrador'),
+('Cliente');
+
+-- TB_USUARIO
+
+INSERT INTO tb_usuario 
+(cd_tipoUser, tx_nome, tx_userName, tx_senha, tx_email, nr_telefone) 
+VALUES
+(1, 'Carlos Eduardo Silva', 'CarlosSilva', 'Carlos123', 'carlos.silva@gmail.com', 49999123456),
+(2, 'Mariana Souza', 'MarianaSouza', 'Mariana123', 'mariana.souza@gmail.com', 49999234567),
+(2, 'João Pedro Martins', 'JoaoMartins', 'Joao12345', 'joao.martins@gmail.com', 49999345678),
+(2, 'Fernanda Oliveira', 'FernandaOliveira', 'Fernanda123', 'fernanda.oliveira@gmail.com', 49999456789),
+(2, 'Lucas Henrique Costa', 'LucasCosta', 'Lucas12345', 'lucas.costa@gmail.com', 49999567890),
+(2, 'Amanda Rodrigues', 'AmandaRodrigues', 'Amanda123', 'amanda.rodrigues@gmail.com', 49999678901),
+(2, 'Rafael Almeida', 'RafaelAlmeida', 'Rafael123', 'rafael.almeida@gmail.com', 49999789012),
+(2, 'Juliana Mendes', 'JulianaMendes', 'Juliana123', 'juliana.mendes@gmail.com', 49999890123),
+(2, 'Gabriel Ferreira', 'GabrielFerreira', 'Gabriel123', 'gabriel.ferreira@gmail.com', 49999901234),
+(2, 'Patricia Gomes', 'PatriciaGomes', 'Patricia123', 'patricia.gomes@gmail.com', 49999012345),
+(2, 'Bruno Carvalho', 'BrunoCarvalho', 'Bruno12345', 'bruno.carvalho@gmail.com', 49999134567),
+(2, 'Camila Pereira', 'CamilaPereira', 'Camila123', 'camila.pereira@gmail.com', 49999245678),
+(2, 'Diego Barbosa', 'DiegoBarbosa', 'Diego12345', 'diego.barbosa@gmail.com', 49999356789),
+(2, 'Larissa Rocha', 'LarissaRocha', 'Larissa123', 'larissa.rocha@gmail.com', 49999467890),
+(2, 'Mateus Ribeiro', 'MateusRibeiro', 'Mateus123', 'mateus.ribeiro@gmail.com', 49999578901);
+
+-- TB_ANIMAL
+
+INSERT INTO tb_animal (tx_descricao) VALUES
+('Cachorro'),
+('Gato'),
+('Coelho'),
+('Hamster'),
+('Calopsita'),
+('Papagaio'),
+('Canário'),
+('Tartaruga'),
+('Iguana'),
+('Porquinho-da-Índia'),
+('Chinchila'),
+('Furão'),
+('Peixe'),
+('Cobra'),
+('Lagarto');
+
+-- TB_PET
+
+INSERT INTO tb_pet 
+(cd_usuario, cd_animal, tx_raca, tx_nome, tx_sexo, vl_idade, vl_pesoKg) 
+VALUES
+(1, 1, 'Labrador', 'Thor', 'M', 5.20, 28.500),
+(2, 2, 'Siamês', 'Mia', 'F', 3.10, 4.200),
+(3, 1, 'Golden Retriever', 'Max', 'M', 4.50, 30.200),
+(4, 3, 'Mini Lop', 'Bunny', 'F', 2.20, 1.800),
+(5, 4, 'Sírio', 'Pipoca', 'F', 1.10, 0.120),
+(6, 5, 'Calopsita', 'Luna', 'F', 2.30, 0.095),
+(7, 6, 'Papagaio Verdadeiro', 'Loro', 'M', 8.40, 0.450),
+(8, 1, 'Poodle', 'Mel', 'F', 6.20, 7.300),
+(9, 2, 'Persa', 'Nina', 'F', 4.10, 4.800),
+(10, 7, 'Canário Belga', 'Sol', 'M', 2.50, 0.025),
+(11, 8, 'Tigre-dágua', 'Tito', 'M', 5.30, 1.200),
+(12, 9, 'Iguana Verde', 'Kiko', 'M', 3.40, 2.500),
+(13, 10, 'Abissínio', 'Cookie', 'F', 1.80, 0.950),
+(14, 11, 'Chinchila', 'Neve', 'F', 2.70, 0.600),
+(15, 12, 'Furão Doméstico', 'Fred', 'M', 3.20, 1.100);
+
+-- TB_CATEGORIAPRODUTO
+
+INSERT INTO tb_categoriaProduto (tx_categoria) VALUES
+('Alimentação'),
+('Higiene'),
+('Brinquedos'),
+('Medicamentos'),
+('Acessórios'),
+('Camas'),
+('Transporte'),
+('Petiscos');
+
+-- TB_PRODUTO
+
+INSERT INTO tb_produto 
+(cd_animal, cd_categoria, tx_nome, tx_dscricao, vl_valor, nr_estoque) 
+VALUES
+(1, 1, 'Ração Premium para Cães', 'Ração premium para cães adultos', 89.90, 25),
+(2, 1, 'Ração para Gatos', 'Ração para gatos adultos', 79.90, 30),
+(1, 8, 'Biscoito Canino', 'Petisco crocante para cães', 19.90, 40),
+(2, 3, 'Bola para Gatos', 'Brinquedo em formato de bola', 15.50, 20),
+(3, 1, 'Ração para Coelhos', 'Alimento completo para coelhos', 45.90, 18),
+(4, 1, 'Ração para Hamster', 'Mistura de sementes para hamster', 22.90, 35),
+(5, 1, 'Ração para Calopsita', 'Alimento especial para calopsitas', 28.50, 22),
+(6, 1, 'Ração para Papagaio', 'Alimento para papagaios', 39.90, 15),
+(1, 5, 'Coleira Ajustável', 'Coleira para cães de porte médio', 32.90, 28),
+(2, 5, 'Arranhador para Gatos', 'Arranhador vertical para gatos', 99.90, 10),
+(8, 1, 'Alimento para Tartaruga', 'Ração específica para tartarugas', 25.90, 17),
+(9, 1, 'Ração para Iguana', 'Alimento para iguanas', 35.90, 12),
+(10, 1, 'Feno para Porquinho-da-Índia', 'Feno natural para roedores', 29.90, 24),
+(11, 1, 'Ração para Chinchila', 'Alimento completo para chinchilas', 42.90, 16),
+(12, 5, 'Guia para Furão', 'Guia ajustável para furões', 49.90, 9);
+
+
+-- TB_SERVICO
+
+INSERT INTO tb_servico 
+(tx_servico, vl_valor, cd_pet, cd_usuario) 
+VALUES
+('Consulta veterinária', 120.00, 1, 2),
+('Banho', 55.00, 2, 3),
+('Tosa', 70.00, 3, 4),
+('Consulta veterinária', 120.00, 4, 2),
+('Corte de unhas', 25.00, 5, 7),
+('Consulta veterinária', 120.00, 6, 2),
+('Limpeza de ouvido', 35.00, 7, 8),
+('Banho e tosa', 110.00, 8, 3),
+('Consulta veterinária', 120.00, 9, 2),
+('Corte de unhas', 25.00, 10, 7),
+('Avaliação veterinária', 90.00, 11, 2),
+('Consulta veterinária', 120.00, 12, 2),
+('Banho', 50.00, 13, 3),
+('Tosa higiênica', 60.00, 14, 4),
+('Consulta veterinária', 120.00, 15, 2);
+
+-- TB_VENDA
+
+INSERT INTO tb_venda 
+(cd_usuario, cd_produto, cd_servico, vl_total, nr_quantidade) 
+VALUES
+(1, 1, NULL, 89.90, 1),
+(2, 2, NULL, 159.80, 2),
+(3, 3, NULL, 59.70, 3),
+(4, 4, NULL, 31.00, 2),
+(5, 5, NULL, 45.90, 1),
+(6, 6, NULL, 45.80, 2),
+(7, 7, NULL, 28.50, 1),
+(8, 8, NULL, 79.80, 2),
+(9, 9, NULL, 32.90, 1),
+(10, 10, NULL, 199.80, 2),
+(11, NULL, 1, 120.00, 1),
+(12, NULL, 2, 55.00, 1),
+(13, NULL, 3, 70.00, 1),
+(14, NULL, 8, 110.00, 1),
+(15, NULL, 15, 120.00, 1);
+
+
+
+select * from tb_animal;
+
+select * from tb_produto;
+
+select * from tb_categoriaproduto;
+
+select * from tb_venda;
+
+select * from tb_servico;
+
+select * from tb_pet;
+
+select * from tb_tipouser;
+
+select * from tb_usuario;
+
+
+
+ALTER TABLE tb_venda DROP COLUMN cd_servico;
+ 
+DELETE FROM tb_venda
+WHERE cd_produto  is null;
+
+ALTER TABLE tb_servico
+ADD COLUMN dt_compra TIMESTAMP DEFAULT NOW();
+
+
+create sequence seq_usuario start 1 increment 1;
+
+create table tb_uses (
+id_uses numeric (18,0)
+	default nextval ('seq_usuario') primary key
+);
+
+CREATE SEQUENCE seq_tipoUser START 1 INCREMENT 1;
+CREATE SEQUENCE seq_usuario START 1 INCREMENT 1;
+CREATE SEQUENCE seq_animal START 1 INCREMENT 1;
+CREATE SEQUENCE seq_pet START 1 INCREMENT 1;
+CREATE SEQUENCE seq_categoriaProduto START 1 INCREMENT 1;
+CREATE SEQUENCE seq_produto START 1 INCREMENT 1;
+CREATE SEQUENCE seq_servico START 1 INCREMENT 1;
+CREATE SEQUENCE seq_venda START 1 INCREMENT 1;
+
+
+ALTER TABLE tb_tipoUser
+ALTER COLUMN id_tipoUser DROP DEFAULT,
+ALTER COLUMN id_tipoUser TYPE NUMERIC(18,0),
+ALTER COLUMN id_tipoUser SET DEFAULT nextval('seq_tipoUser');
+
+ALTER TABLE tb_usuario
+ALTER COLUMN id_usuario DROP DEFAULT,
+ALTER COLUMN id_usuario TYPE NUMERIC(18,0),
+ALTER COLUMN id_usuario SET DEFAULT nextval('seq_usuario');
+
+ALTER TABLE tb_animal
+ALTER COLUMN id_animal DROP DEFAULT,
+ALTER COLUMN id_animal TYPE NUMERIC(18,0),
+ALTER COLUMN id_animal SET DEFAULT nextval('seq_animal');
+
+ALTER TABLE tb_pet
+ALTER COLUMN id_pet DROP DEFAULT,
+ALTER COLUMN id_pet TYPE NUMERIC(18,0),
+ALTER COLUMN id_pet SET DEFAULT nextval('seq_pet');
+
+ALTER TABLE tb_categoriaProduto
+ALTER COLUMN id_categoriaProduto DROP DEFAULT,
+ALTER COLUMN id_categoriaProduto TYPE NUMERIC(18,0),
+ALTER COLUMN id_categoriaProduto SET DEFAULT nextval('seq_categoriaProduto');
+
+ALTER TABLE tb_produto
+ALTER COLUMN id_produto DROP DEFAULT,
+ALTER COLUMN id_produto TYPE NUMERIC(18,0),
+ALTER COLUMN id_produto SET DEFAULT nextval('seq_produto');
+
+ALTER TABLE tb_servico
+ALTER COLUMN id_servico DROP DEFAULT,
+ALTER COLUMN id_servico TYPE NUMERIC(18,0),
+ALTER COLUMN id_servico SET DEFAULT nextval('seq_servico');
+
+ALTER TABLE tb_venda
+ALTER COLUMN id_venda DROP DEFAULT,
+ALTER COLUMN id_venda TYPE NUMERIC(18,0),
+ALTER COLUMN id_venda SET DEFAULT nextval('seq_venda');
