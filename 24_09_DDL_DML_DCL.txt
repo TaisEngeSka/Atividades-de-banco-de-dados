@@ -1,0 +1,49 @@
+-- 24/09
+
+-- cria um perfil e senha
+create role perfil_leitura with login password 'leitura';
+
+-- altera as permissões deste perfil
+grant  
+	select, insert, update, delete 
+on all tables 
+	in  schema public to perfil_leitura;
+
+insert into 
+	tb_produto (id_produto, cd_animal, cd_categoria, tx_nome, tx_dscricao, vl_valor, nr_estoque)
+		values (18, 8, 6, 'ração', 'ração em grãos', 89, 5);
+
+select * from tb_produto 
+
+-- remove alguma destas alterações / permissões
+revoke delete on all tables 
+	in schema public from perfil_leitura;
+
+-- remove todas as permissões / privilégios 
+revoke all privileges on all tables 
+	in schema public from perfil_leitura;
+
+
+
+
+-- atividades 
+create role perfil_joana with login password '123';
+
+grant 
+	create
+	in  schema public to perfil_joana;
+
+GRANT CREATE
+on SCHEMA public
+TO perfil_joana;
+
+grant 
+	select
+on tb_usuario 
+	to perfil_joana;
+
+-- testes em perfil_joana 
+
+select * from tb_usuario tu 
+
+create table tb_joao(id numeric(18,0) )
