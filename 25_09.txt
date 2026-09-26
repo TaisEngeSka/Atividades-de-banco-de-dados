@@ -1,0 +1,115 @@
+-- 25/09
+
+-- 1
+create role perfil_atendimento with login password '123ert';
+
+grant 
+	insert, select
+on tb_venda
+	to perfil_atendimento;
+
+-- 2 
+
+grant 
+	all privileges 
+on tb_produtos 
+	to perfil_operador;
+
+-- 3 
+
+revoke 
+	insert 
+on tb_pedidos 
+	from perfil_leitura;
+
+-- 4
+
+revoke 
+	perfil_leitura 
+from perfil_joana;
+
+
+-- 5 
+
+-- qual o erro?
+-- revoke select on tb_usuario to perfil_leitura;
+
+revoke select on tb_usuario from perfil_leitura;
+
+-- create role pedro login  'senha456';
+create role pedro  with login password 'senha456';
+
+-- grant all privileges on tb_usuario to gerente;
+
+grant all privileges on tb_usuario to gerente;
+
+-- tb_usuario (id, tx_nome)
+-- grant update on tb_usuario to gerente 
+-- update tb_usuario(tx_nome) values ('joao');
+
+-- tb_usuario (id, tx_nome)
+grant update on tb_usuario to gerente;
+update tb_usuario(tx_nome) values ('joao'); 
+--|| 
+update tb_usuario set tx_nome = 'joao';
+
+
+
+
+--- conteudo novo 
+
+-- Transações e TCL
+
+begin; -- inicia o processo 
+
+savepoint antes_do_update;
+
+update tb_usuario tu  set tx_nome = 'roupas' where tu.cd_tipouser = 2;
+
+rollback to antes_do_update;
+
+-- desfaz as alterações
+rollback; 
+
+-- confirma e salva as alterações
+COMMIT;
+
+
+select * from pedidos;
+--1 
+
+select 
+	count (id) as total_pedidos 
+from pedidos 
+where criado_em  >= now() - interval '90 days' and status = 'entregue';
+
+-- 2
+
+select 
+ 	ven.nome,
+	count (prod.vendedor_id) as total_vendido,
+	sum(prod.total) as faturamento
+from 
+	pedidos prod
+inner join vendedores ven
+	on ven.id = prod.vendedor_id 
+where 
+	prod.criado_em  >= now() - interval '30 days' 
+		and status != 'cancelado'
+group by ven.nome
+order by faturamento desc;
+
+!= ( numero )
+<> ( numero )
+not in ( 'CANCELADO' ) -- mais rápido
+
+
+
+
+
+
+
+
+
+
+
