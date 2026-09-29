@@ -101,8 +101,7 @@ order by faturamento desc;
 
 != ( numero )
 <> ( numero )
-not in ( 'CANCELADO' ) -- mais rápido
-
+not in ( 'dgdrf' ) -- mais rápido
 
 
 
