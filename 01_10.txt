@@ -107,4 +107,4 @@ drop index
  
  create index 
  	idx_endereco_cd_usuario
- on tb_enderecos(cd_usuario);
+ on tb_enderecos(cd_usuario); 
