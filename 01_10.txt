@@ -1,0 +1,110 @@
+-- 01/10
+-- INDEX — acelerando buscas
+
+-- exemplos
+explain 
+select * from tb_usuarios
+where tx_email= 'usuario3500@exemplo.com';
+
+create unique index 
+	idx_usuario_email 
+	on tb_usuarios(tx_email);
+
+-- atv 
+
+-- 1
+explain
+select 
+	id_pedido as codigo,
+	dt_pedido as data,
+	vl_total as total
+from
+	tb_pedidos
+where 
+	cd_usuario = 1234;
+
+create index 
+	idx_pedidos_usuario -- idx + tabela + coluna 
+	on tb_pedidos(cd_usuario);
+
+
+-- ( (t.antes - t.depois) / t.antes ) * 100
+--( ( 0.0017 - 0.001 ) / 0.0017 ) * 100 
+-- 41,17% de melhora 
+
+-- 2
+
+select 
+	pess.tx_nome as usuario,
+	pedi.id_pedido as codigo,
+	prod.tx_nome as produto,
+	item.nr_quantidade as quantidade,
+	prod.vl_preco as valor_unitario
+from
+	tb_usuarios pess
+inner join tb_pedidos pedi 
+on
+	pedi.cd_usuario = pess.id_usuario
+inner join tb_itens_pedido item 
+on
+	item.cd_pedido = pedi.id_pedido
+inner join tb_produtos prod
+on
+	prod.id_produto = item.cd_produto
+where
+	pess.id_usuario = 1234;
+
+-- antes 0.05
+-- depois 0.003
+-- 94%
+
+create index 
+ idx_pedido_usuario
+on tb_pedidos(cd_usuario)
+
+create index
+	idx_item_pedido 
+on tb_itens_pedido(cd_pedido);
+
+create index 
+	idx_produtos_itens 
+on tb_itens_pedido(cd_produto);
+
+drop index 
+ idx_produtos_itens
+ 
+ -- 3 
+ 
+ select 
+ 	id_pedido as codigo,
+ 	vl_total as total
+ from 
+ 	tb_pedidos 
+ where tx_status = 'ENTREGUE' and dt_pedido >= '2023-05-23';
+ 
+ -- antes 0.002 
+ -- depois 0.001 
+ -- 50%
+ 
+ create index 
+ 	idx_pedidos_status 
+ on tb_pedidos(tx_status);
+ 
+ -- 4 
+ 
+ select 
+  	cli.tx_nome, 
+  	ender.tx_logradouro,
+  	ender.nr_numero,
+  	ender.tx_cidade 
+ from tb_usuarios cli
+ inner join tb_enderecos ender 
+ on ender.cd_usuario = cli.id_usuario;
+ 
+ -- antes 0.014
+ -- depois 0.013 
+ -- 7,14%
+ 
+ create index 
+ 	idx_endereco_cd_usuario
+ on tb_enderecos(cd_usuario);
