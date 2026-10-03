@@ -1,0 +1,70 @@
+-- 02/10 
+create view vw_pedidos_usuarios as 
+select 
+	ped.cd_usuario as codigo_usuario,
+	count(ped.cd_usuario) as total_pedidos,
+	sum(item.nr_quantidade) as total_itens,
+	sum((item.nr_quantidade * item.vl_unitario ) - item.vl_desconto) as valor_liquido
+from tb_pedidos as ped
+inner join tb_itens_pedido item
+	on item.cd_pedido = ped.id_pedido 
+where ped.fl_pago is true and ped.dt_pedido >= (now() - interval '2 years')
+group by ped.cd_usuario
+having count(ped.cd_usuario) >= 3;
+
+
+-- todo o select de anes fica salvo na variável vw_pedidos_usuarios;
+select * from vw_pedidos_usuarios;
+
+
+
+
+create materialized view vw_cliente_destaque as 
+with media as (
+select 
+	avg(valor_liquido) as valor
+from
+	vw_pedidos_usuarios
+),
+cacelado as (
+		select
+			cd_usuario,
+			count(id_pedido) as total
+		from
+			tb_pedidos
+		where
+			upper(tx_status) = upper('CANCELADO')
+		group by
+			cd_usuario
+)
+select
+	use.id_usuario as codigo_cliente,
+	use.tx_nome,
+	en.tx_uf as estado,
+	cacelado.total
+from
+	tb_usuarios use
+inner join tb_enderecos en 
+on
+	en.cd_usuario = use.id_usuario
+inner join vw_pedidos_usuarios vw
+on
+	vw.codigo_usuario = use.id_usuario
+left join cacelado 
+on
+	cacelado.cd_usuario = use.id_usuario
+inner join media 
+on
+	vw.valor_liquido > media.valor
+where
+	 use.fl_ativo is true
+
+
+select * from vw_cliente_destaque;
+
+
+select tx_status from tb_pedidos ped
+inner join tb_usuarios u
+on u.id_usuario = ped.cd_usuario 
+where ped.tx_status = 'CANCELADO' and u.fl_ativo is true
+
