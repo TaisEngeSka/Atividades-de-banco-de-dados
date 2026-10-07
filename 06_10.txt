@@ -1,0 +1,153 @@
+-- 06/10
+
+
+--------------------------- REVISÃO | VIEW ---------------------------------------------
+
+create sequence seq_atividade start 1 increment 1;
+
+create table tb_atividade (
+id_atividade numeric (18,0)
+	default nextval ('seq_atividade') primary key,
+tx_nome varchar (255),
+dt_nascimeto date,
+tx_genero varchar (1)
+);
+
+alter table tb_atividade rename column dt_nascimeto  to dt_nascimento;
+
+
+insert into tb_atividade (tx_nome, dt_nascimento, tx_genero)
+values ('Ana Julia', '2000-12-23', 'F'),
+('Julia Clara', '2004-10-03', 'F'),
+('Ana Clara', '1990-02-15', 'F');
+
+select * from tb_atividade;
+
+create view 
+	vw_atividade 
+as select * from tb_atividade;
+
+create materialized view 
+	vw_atividade_materialized
+as select * from tb_atividade;
+
+insert into tb_atividade (tx_nome, dt_nascimento, tx_genero)
+values ('Carlos José', '1998-11-22', 'M'),
+('José Afonso', '1987-04-25', 'M'),
+('Afonso Carlos', '1975-07-30', 'M');
+
+create sequence seq_atividade_log start 1 increment 1;
+
+create table tb_atividade_log (
+	id_atividade_log numeric (18,0)
+		 default nextval ('seq_atividade_log') primary key,
+	tx_query varchar (800),
+	nr_idade numeric (3),
+	tx_mensagem varchar (255),
+	cd_atividade numeric (18,0)
+);
+
+refresh materialized view vw_atividade_materialized;
+
+select * from vw_atividade_materialized;
+
+------------------------------------ conteúdo novo ----------------------------------------------
+
+--  PL/pgSQL é a linguagem procedural nativa do PostgreSQL: ele adiciona estruturas de programação ao SQL, 
+-- permitindo escrever lógica real dentro do banco.
+
+create function fn_nome ( parametros)  -- () apenas para parametros
+returns numeric / varchar    -- o que vai retornar s no final para diferenciar dos outros 
+language plpgsql   -- linguagem utilizada -- o pl converte para if else --- pgsql linguagem do banco
+as $$              --as espera -- $$ -- tipo parenteses, delimina começo e fim 
+
+begin       -- inicio
+ 
+			--- mistura de typescript com sql 
+	
+end         -- fim 
+
+$$;
+
+create function fn_nome (valor numeric)
+returns varchar 
+language plpgsql
+as $$
+
+	begin 
+
+		if(valor > 18) then
+			return 'Maior de idade';		
+	
+		elsif (valor = 18) then 
+			return 'possui 18 anos';		
+		
+		else 
+			return 'Menor de idade'; 
+		end if;			
+	
+		end;
+$$;
+
+select *, fn_nome (19) from tb_atividade;
+
+
+
+-------------------------------- ATIVIDADES -----------------------------------
+
+select 
+	age(dt_nascimento),
+	extract (year from age(dt_nascimento) )
+from tb_atividade; 
+
+
+create function fn_idade2 (valor date)
+returns varchar 
+language plpgsql
+as $$
+
+	begin 
+
+		if(extract (year from age(valor) ) > 18) then
+			return 'Maior de idade';		
+	
+		elsif (extract (year from age(valor) ) = 18) then 
+			return 'possui 18 anos';		
+		
+		else 
+			return 'Menor de idade'; 
+		end if;			
+	
+		end;
+$$;
+
+
+select 
+	*,
+	fn_idade2(dt_nascimento) 
+from tb_atividade;
+
+
+
+create function fn_exemplo_variavel (valor date)
+returns varchar 
+language plpgsql
+as $$
+	declare 
+		idade integer;
+	begin
+		idade := extract (year from age(valor) );
+		if(idade > 18) then
+			return 'Maior de idade';		
+		elsif (idade = 18) then 
+			return 'possui 18 anos';			
+		else 
+			return 'Menor de idade'; 
+		end if;			
+		end;
+$$;
+
+
+
+
+
