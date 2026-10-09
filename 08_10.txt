@@ -1,0 +1,206 @@
+-- 08/10 
+
+create function nome (parametro tipo)
+returns tipo_da_funcao
+language plpgsql
+as $$
+	declare 
+		variavel tipo
+	begin 
+	
+		if() then 
+			return;
+			
+		elsif() then 
+			return;
+			
+		else
+			return ;
+		
+		end if;
+		
+	end;
+$$
+
+
+
+-------------------- | ATIVIDADES | ---------------------------------
+
+-- 1 
+
+-- Preço Final = Preço Original × (1 − Percentual de Desconto ÷ 100
+
+create function fn_calcular_desconto (valor numeric, desconto numeric)
+returns numeric 
+language plpgsql 
+as $$ 
+	begin 
+		  	return  valor * (1 - desconto / 100);  
+	end;
+$$;
+
+select 
+	id_item_pedido,
+	vl_unitario, 
+	vl_desconto,
+	fn_calcular_desconto (vl_unitario, vl_desconto)
+from tb_itens_pedido;
+
+select 
+	fn_calcular_desconto (100, 50)
+from tb_itens_pedido;
+
+
+-- 2 
+
+create function fn_calculadora (vl1 numeric, vl2 numeric, operador varchar)
+returns numeric
+language plpgsql
+as $$ 
+	begin
+		if (operador = '-') then
+			return vl1 - vl2;
+		elsif ( operador = '+') then
+			return  vl1 + vl2;
+		elsif (operador = '*') then 
+		 	return vl1 * vl2;
+		 else 
+		 	return vl1 / vl2;
+		 end if;
+	end;
+$$
+
+select fn_calculadora (2, 4, '/')
+from tb_atividade;
+
+-- com o case 
+
+create function calculadora
+	(valor1 numeric,
+		valor2 numeric, 
+			operacao numeric)
+returns numeric	
+language plpgsql
+as $$
+	declare
+		resultado numeric;
+	begin
+		case operacao
+		when  1 then
+			resultado := valor1 + valor2;
+		when  2 then
+			resultado := valor1 - valor2;
+		when  3 then
+			resultado := valor1 * valor2;
+		when  4 then
+			resultado := valor1 / valor2;
+		else 
+			resultado := -1;
+		end case;
+	
+		return resultado;	
+	end
+$$;
+
+------------------------------ | 3 | ----------------------------------
+
+create function fn_sla (valor numeric)
+returns varchar 
+language plpgsql
+as $$ 
+	begin 
+		if(valor < 50) then 
+			return 'barato';
+		elsif (valor < 200) then 
+			return 'médio';
+		else 
+			return 'caro';
+		end if;
+	end;
+$$;
+
+select fn_sla(123);
+
+--------------------- | 4 | -------------------------------
+
+create function fn_dobro (valor numeric)
+returns numeric
+language plpgsql
+as $$ 
+	begin 
+		return valor * 2;
+	end;
+$$;
+
+select fn_dobro(4);
+
+
+------------------------ | 5 | ------------------------------------------
+
+create function fn_par_impar (valor numeric)
+returns varchar 
+language plpgsql
+as $$ 
+	declare 
+		resto numeric;
+	begin 
+		resto := valor % 2;
+		if (resto = 0) then
+			return 'par';
+		else 
+			return 'ímpar';
+		end if;
+	end;
+$$;
+
+select fn_par_impar(8);
+
+------------------------ | 6 | ------------------------------
+
+create function fn_aluno (nota numeric)
+returns varchar
+language plpgsql
+as $$ 
+	begin 
+		if(nota < 0 or nota > 10) then 
+			return 'nota inválida';
+		elsif (nota >= 7)then
+			return 'Aprovado';
+		elsif (nota < 5) then 
+			return 'Reprovado';
+		else 
+			return 'Recuperação';
+		end if;
+	end;
+$$;
+
+select fn_aluno(10);
+
+
+------------------------- NOVO CONTEÚDO -----------------------------------
+
+create trigger -- CRIAR UMA NOVA AÇÃO 
+	tr_quando_atualizar_usuario
+before update  --  quando faço a ação
+	on tb_usuario -- onde faço a ação
+for each row -- repete enquanto for real percorrendo cada linha
+		ouu
+for each statement -- repete uma vez 
+execute function funcao();
+	 
+create function log_atividade()
+returns trigger 
+language plpgsql as $$
+	begin 
+		insert into public.tb_atividade_log 
+		(tx_query, nr_idade, tx_mensagem, cd_atividade) 
+		values (null, new ou old, null, null,);
+	end;
+$$;
+
+create trigger tr_quando_atualizar_usuario
+before update on tb_atividade_log
+for each row 
+execute function funcao();
+
+
