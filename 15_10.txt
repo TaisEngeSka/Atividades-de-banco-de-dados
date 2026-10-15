@@ -1,0 +1,27 @@
+-- 15/10
+
+-- 1
+
+select 
+	prod.id_produto as codigo_produto,
+	prod.tx_descricao as descricao,
+	pedi.vl_total as total_pago,
+	max(pedi.dt_pedido) as maior_data,
+	max(pedi.cd_usuario) as usuario
+from 
+	tb_produtos prod
+inner join tb_itens_pedido item
+	on item.cd_produto = prod.id_produto 
+inner join tb_pedidos pedi
+	on pedi.id_pedido = item.cd_produto
+where 	
+	exists (select 1 from tb_enderecos where upper(tx_uf) = upper('sc'))
+	and pedi.tx_status = 'PAGO'
+	and pedi.vl_total > 0
+group by prod.id_produto, prod.tx_descricao, pedi.vl_total
+limit 50;
+
+
+
+select tx_status from tb_pedidos
+where tx_status = 'PAGO'
