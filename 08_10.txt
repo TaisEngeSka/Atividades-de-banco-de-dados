@@ -28,7 +28,7 @@ $$
 
 -- 1 
 
--- Preço Final = Preço Original × (1 − Percentual de Desconto ÷ 100
+-- Preço Final = Preço Original × (1 − Percentual de Desconto ÷ 100)
 
 create function fn_calcular_desconto (valor numeric, desconto numeric)
 returns numeric 

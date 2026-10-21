@@ -1,0 +1,29 @@
+-- 20/10
+
+create or replace function fn_estados (uf varchar)
+returns varchar
+language plpgsql
+as $$ 
+begin 
+	case upper(uf)
+		when 'SP' then
+			return 'São Paulo';
+		when 'PR' then
+			return 'Paraná';
+		when 'RS' then
+			return 'Rio Grande';
+		when 'SC' then
+			return 'Santa Catarina';
+		end case;
+end 
+$$;
+
+select tx_uf from tb_enderecos
+group by tx_uf;
+
+select 
+	fn_estados(tx_uf), 
+	tx_uf 
+from 
+	tb_enderecos
+group by tx_uf;
