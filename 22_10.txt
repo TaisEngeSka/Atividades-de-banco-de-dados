@@ -1,0 +1,17 @@
+-- 22/10/2026
+
+create sequence seq_msg start 1 increment 1;
+
+create table tb_mensagem (
+id_mensagem numeric (18,0)
+	default nextval ('seq_msg') primary key,
+tx_descricao varchar (255)
+);
+
+insert into tb_mensagem (tx_descricao)
+values ('produto novo');
+
+select * from tb_mensagem;
+
+create database olamundo_atv;
+
