@@ -1,0 +1,72 @@
+-- 29/10/2026 --
+
+--------------  |  ATIVIDADES  |  ----------------
+
+-- 1
+
+select tx_nome as nome,  
+from tb_clientes 
+where fl_ativo is true
+order by tx_nome desc;
+
+-- 2
+
+select sum(vl_cobranca) as total_cobrado,
+tx_mes 
+from tb_cobrancas 
+group by (tx_mes)
+order by 1 asc;
+
+-- coluna que é para ser ordenada
+
+select * from tb_cobrancas tc 
+
+-- 3
+
+select sum (vl_cobranca) as total, 
+		cd_cliente
+from tb_cobrancas
+where tx_mes like '%-10'
+group by cd_cliente
+order by total desc;
+
+-- 4 
+
+select cli.tx_nome,
+sum (vl_cobranca) as total		
+from tb_cobrancas co
+inner join tb_clientes cli
+on co.cd_cliente = cli.id_cliente 
+where tx_mes like '%-10' and 
+	vl_cobranca > (select sum(co.vl_cobranca) / count (cd_cliente) as media 
+	from tb_cobrancas 
+	where co.cd_cliente = cli.id_cliente 
+	group by cd_cliente)
+group by cli.tx_nome
+order by total desc;
+
+---- certo -- 
+with valores as (
+	select
+			cli.id_cliente as codigo,
+			sum(cobra.vl_cobranca) as valor
+	from
+			tb_clientes cli
+	inner join tb_cobrancas cobra on
+			cobra.cd_cliente = cli.id_cliente
+	where
+		upper(cobra.tx_mes) = upper('2026-10')
+	group by
+		cli.id_cliente
+)
+select
+	cli.tx_nome as nome,
+	cli.id_cliente as codigo
+from
+	valores
+inner join tb_clientes cli on
+	cli.id_cliente = valores.codigo
+where valores.valor > (select avg(valor) from valores )	
+
+
+
