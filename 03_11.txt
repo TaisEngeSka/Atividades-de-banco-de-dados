@@ -1,0 +1,47 @@
+-- 03 / 11 / 2026
+-- role sem login: age como grupo de permissões
+CREATE ROLE perfil_leitura;
+CREATE ROLE perfil_operador;
+
+-- role com login: usuário real que conecta ao banco
+CREATE ROLE ana WITH LOGIN PASSWORD 'senha_ana';
+CREATE ROLE carlos WITH LOGIN PASSWORD 'senha_carlos';
+
+-- adicionar usuários aos grupos (herança de permissões)
+GRANT perfil_leitura TO ana;
+GRANT perfil_operador TO carlos;
+
+-- remover usuário de um grupo
+REVOKE perfil_leitura FROM ana;
+
+--------------------------------------------------------------------------------------
+
+-- 1
+create role rl_atendimento;
+create role rl_financeiro;
+create role rl_diretoria;
+create role rl_estagio;
+
+-- 2
+create role usr_maria with login password 'usr_maria';
+create role usr_carlos with login password 'usr_carlos';
+create role usr_paulo with login password 'usr_paulo';
+
+-- 3 
+grant rl_atendimento to usr_maria;
+grant rl_financeiro to usr_carlos;
+grant rl_estagio to usr_paulo;
+
+--------------------------------------------------------
+GRANT SELECT, INSERT ON vendas TO analistas_financeiros;
+--------------------------------------------------------
+
+-- 4 
+grant select on tb_planos, tb_clientes to rl_atendimento;
+
+-- 5 
+grant update (tx_email, fl_ativo) on tb_clientes to rl_atendimento;
+
+-- 6
+grant select on all tables in schema public to rl_financeiro;
+grant insert on tb_cobrancas, tb_pagamentos to rl_financeiro;
