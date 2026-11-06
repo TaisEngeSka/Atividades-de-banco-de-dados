@@ -1,0 +1,27 @@
+-- 05 / 11 
+-- banco: atendimento 
+
+select 
+	cli.tx_nome as cliente,
+	plan.tx_nome as plano,
+	count(cobra.cd_cliente) as quantidade_cobrancas,
+	max(cobra.vl_cobranca )as maior_cobranca,
+	sum(cobra.vl_cobranca) as cobrado,
+	sum(case when paga.vl_pago 
+			is null then 0 
+			else paga.vl_pago end) as pago,
+	sum(case when paga.id_pagamento  
+			is null then 0 
+			else cobra.vl_cobranca end) as em_aberto,
+	min(cobra.tx_mes) as mais_antigo,
+	max(cobra.tx_mes) as mais_recente
+from tb_clientes cli 
+inner join tb_planos plan
+	on cli.cd_plano = plan.id_plano
+inner join tb_cobrancas cobra
+	on cobra.cd_cliente = cli.id_cliente 
+left join tb_pagamentos paga
+	on paga.cd_cobranca = cobra.id_cobranca 
+group by cli.tx_nome, plan.tx_nome;
+
+select * from tb_cobrancas;
