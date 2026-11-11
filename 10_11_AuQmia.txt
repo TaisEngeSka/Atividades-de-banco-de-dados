@@ -1,0 +1,626 @@
+create database "auqmia";
+
+-- =====================================================
+-- sequences
+-- =====================================================
+
+create sequence seq_tipouser start 1 increment 1;
+create sequence seq_usuario start 1 increment 1;
+create sequence seq_animal start 1 increment 1;
+create sequence seq_pet start 1 increment 1;
+create sequence seq_categoriaproduto start 1 increment 1;
+create sequence seq_produto start 1 increment 1;
+create sequence seq_servico start 1 increment 1;
+create sequence seq_venda start 1 increment 1;
+create sequence seq_item_venda start 1 increment 1;
+
+
+-- =====================================================
+-- tabelas
+-- =====================================================
+
+create table tb_tipouser (
+    id_tipouser numeric(18,0)
+        default nextval('seq_tipouser') primary key,
+    tx_descricao varchar(255) not null
+);
+
+create table tb_usuario (
+    id_usuario numeric(18,0)
+        default nextval('seq_usuario') primary key,
+    cd_tipouser numeric(18,0) not null,
+    tx_nome varchar(255) not null,
+    tx_username varchar(255) unique not null,
+    tx_senha varchar(255) not null,
+    tx_email varchar(255),
+    nr_telefone numeric(11,0),
+    dt_criacao timestamp default now(),
+    constraint fk_usuario_tipouser
+        foreign key (cd_tipouser)
+        references tb_tipouser(id_tipouser)
+);
+
+create table tb_animal (
+    id_animal numeric(18,0)
+        default nextval('seq_animal') primary key,
+    tx_descricao varchar(255) not null
+);
+
+create table tb_pet (
+    id_pet numeric(18,0)
+        default nextval('seq_pet') primary key,
+    cd_usuario numeric(18,0) not null,
+    cd_animal numeric(18,0) not null,
+    tx_raca varchar(255),
+    tx_nome varchar(255) not null,
+    tx_sexo varchar(1) not null,
+    vl_idade numeric(4,2),
+    vl_pesoKg numeric(6,3),
+    constraint fk_pet_usuario
+        foreign key (cd_usuario)
+        references tb_usuario(id_usuario),
+    constraint fk_pet_animal
+        foreign key (cd_animal)
+        references tb_animal(id_animal),
+    constraint ck_pet_sexo
+        check (tx_sexo in ('m', 'f')),
+    constraint ck_pet_idade
+        check (vl_idade is null or vl_idade >= 0),
+    constraint ck_pet_peso
+        check (vl_pesoKg is null or vl_pesoKg >= 0)
+);
+
+create table tb_categoriaproduto (
+    id_categoriaproduto numeric(18,0)
+        default nextval('seq_categoriaproduto') primary key,
+    tx_categoria varchar(255) not null
+);
+
+create table tb_produto (
+    id_produto numeric(18,0)
+        default nextval('seq_produto') primary key,
+    cd_animal numeric(18,0) not null,
+    cd_categoria numeric(18,0) not null,
+    tx_nome varchar(255) not null,
+    tx_dscricao varchar(255) not null,
+    vl_valor numeric(10,2) not null,
+    nr_estoque integer not null default 0,
+    constraint fk_produto_animal
+        foreign key (cd_animal)
+        references tb_animal(id_animal),
+    constraint fk_produto_categoria
+        foreign key (cd_categoria)
+        references tb_categoriaproduto(id_categoriaproduto),
+    constraint ck_produto_valor
+        check (vl_valor > 0),
+    constraint ck_produto_estoque
+        check (nr_estoque >= 0)
+);
+
+create table tb_servico (
+    id_servico numeric(18,0)
+        default nextval('seq_servico') primary key,
+    tx_servico varchar(255) not null,
+    vl_valor numeric(10,2) not null,
+    cd_pet numeric(18,0) not null,
+    cd_usuario numeric(18,0) not null,
+    dt_compra timestamp default now(),
+    constraint fk_servico_pet
+        foreign key (cd_pet)
+        references tb_pet(id_pet),
+    constraint fk_servico_usuario
+        foreign key (cd_usuario)
+        references tb_usuario(id_usuario),
+    constraint ck_servico_valor
+        check (vl_valor > 0)
+);
+
+create table tb_venda (
+    id_venda numeric(18,0)
+        default nextval('seq_venda') primary key,
+    cd_usuario numeric(18,0) not null,
+    vl_total numeric(12,2) not null default 0,
+    dt_compra timestamp default now(),
+    constraint fk_venda_usuario
+        foreign key (cd_usuario)
+        references tb_usuario(id_usuario),
+    constraint ck_venda_total
+        check (vl_total >= 0)
+);
+
+create table tb_item_venda (
+    id_item_venda numeric(18,0)
+        default nextval('seq_item_venda') primary key,
+    cd_venda numeric(18,0) not null,
+    cd_produto numeric(18,0) not null,
+    nr_quantidade integer not null,
+    vl_subtotal numeric(12,2) not null,
+    constraint fk_item_venda_venda
+        foreign key (cd_venda)
+        references tb_venda(id_venda),
+    constraint fk_item_venda_produto
+        foreign key (cd_produto)
+        references tb_produto(id_produto),
+    constraint ck_item_venda_quantidade
+        check (nr_quantidade > 0),
+    constraint ck_item_venda_subtotal
+        check (vl_subtotal >= 0)
+);
+
+
+-- =====================================================
+-- inserts
+-- =====================================================
+
+insert into tb_tipouser (tx_descricao)
+values ('administrador'), ('cliente');
+
+insert into tb_usuario
+(cd_tipouser, tx_nome, tx_username, tx_senha, tx_email, nr_telefone)
+values
+(1, 'carlos eduardo silva', 'carlossilva', 'carlos123', 'carlos.silva@gmail.com', 49999123456),
+(2, 'mariana souza', 'marianasouza', 'mariana123', 'mariana.souza@gmail.com', 49999234567),
+(2, 'joao pedro martins', 'joaomartins', 'joao12345', 'joao.martins@gmail.com', 49999345678),
+(2, 'fernanda oliveira', 'fernandaoliveira', 'fernanda123', 'fernanda.oliveira@gmail.com', 49999456789),
+(2, 'lucas henrique costa', 'lucascosta', 'lucas12345', 'lucas.costa@gmail.com', 49999567890),
+(2, 'amanda rodrigues', 'amandarodrigues', 'amanda123', 'amanda.rodrigues@gmail.com', 49999678901),
+(2, 'rafael almeida', 'rafaelalmeida', 'rafael123', 'rafael.almeida@gmail.com', 49999789012),
+(2, 'juliana mendes', 'julianamendes', 'juliana123', 'juliana.mendes@gmail.com', 49999890123),
+(2, 'gabriel ferreira', 'gabrielferreira', 'gabriel123', 'gabriel.ferreira@gmail.com', 49999901234),
+(2, 'patricia gomes', 'patriciagomes', 'patricia123', 'patricia.gomes@gmail.com', 49999012345);
+
+insert into tb_animal (tx_descricao)
+values
+('cachorro'),
+('gato'),
+('coelho'),
+('hamster'),
+('calopsita'),
+('papagaio'),
+('canario'),
+('tartaruga'),
+('iguana'),
+('porquinho-da-india');
+
+insert into tb_pet
+(cd_usuario, cd_animal, tx_raca, tx_nome, tx_sexo, vl_idade, vl_pesoKg)
+values
+(1, 1, 'labrador', 'thor', 'm', 5.20, 28.500),
+(2, 2, 'siames', 'mia', 'f', 3.10, 4.200),
+(3, 1, 'golden retriever', 'max', 'm', 4.50, 30.200),
+(4, 3, 'mini lop', 'bunny', 'f', 2.20, 1.800),
+(5, 4, 'sirio', 'pipoca', 'f', 1.10, 0.120),
+(6, 5, 'calopsita', 'luna', 'f', 2.30, 0.095),
+(7, 6, 'papagaio verdadeiro', 'loro', 'm', 8.40, 0.450),
+(8, 1, 'poodle', 'mel', 'f', 6.20, 7.300),
+(9, 2, 'persa', 'nina', 'f', 4.10, 4.800),
+(10, 7, 'canario belga', 'sol', 'm', 2.50, 0.025);
+
+insert into tb_categoriaproduto (tx_categoria)
+values
+('alimentacao'),
+('higiene'),
+('brinquedos'),
+('medicamentos'),
+('acessorios'),
+('camas'),
+('transporte'),
+('petiscos'),
+('roupas'),
+('cuidados veterinarios');
+
+insert into tb_produto
+(cd_animal, cd_categoria, tx_nome, tx_dscricao, vl_valor, nr_estoque)
+values
+(1, 1, 'racao premium para caes', 'racao premium para caes adultos', 89.90, 25),
+(2, 1, 'racao para gatos', 'racao completa para gatos adultos', 79.90, 30),
+(1, 8, 'biscoito canino', 'petisco crocante para caes', 19.90, 40),
+(2, 3, 'bola para gatos', 'brinquedo em formato de bola', 15.50, 20),
+(3, 1, 'racao para coelhos', 'alimento completo para coelhos', 45.90, 18),
+(4, 1, 'racao para hamster', 'mistura de sementes para hamster', 22.90, 35),
+(5, 1, 'racao para calopsita', 'alimento especial para calopsitas', 28.50, 22),
+(6, 1, 'racao para papagaio', 'alimento para papagaios', 39.90, 15),
+(1, 5, 'coleira ajustavel', 'coleira para caes de porte medio', 32.90, 28),
+(2, 5, 'arranhador para gatos', 'arranhador vertical para gatos', 99.90, 10);
+
+insert into tb_servico
+(tx_servico, vl_valor, cd_pet, cd_usuario)
+values
+('consulta veterinaria', 120.00, 1, 1),
+('banho', 55.00, 2, 2),
+('tosa', 70.00, 3, 3),
+('consulta veterinaria', 120.00, 4, 4),
+('corte de unhas', 25.00, 5, 5),
+('consulta veterinaria', 120.00, 6, 6),
+('limpeza de ouvido', 35.00, 7, 7),
+('banho e tosa', 110.00, 8, 8),
+('consulta veterinaria', 120.00, 9, 9),
+('corte de unhas', 25.00, 10, 10);
+
+
+-- =====================================================
+-- function
+-- =====================================================
+
+create or replace function fn_total_compras_usuario(
+    p_id_usuario numeric(18,0)
+)
+returns numeric(12,2)
+language plpgsql
+as $$
+declare
+    v_total numeric(12,2);
+begin
+    select coalesce(sum(vl_total), 0)
+    into v_total
+    from tb_venda
+    where cd_usuario = p_id_usuario;
+
+    return v_total;
+end;
+$$;
+
+
+-- =====================================================
+-- function da trigger
+-- =====================================================
+
+create or replace function fn_controlar_estoque()
+returns trigger
+language plpgsql
+as $$
+declare
+    v_valor numeric(10,2);
+    v_estoque integer;
+begin
+    select vl_valor, nr_estoque
+    into v_valor, v_estoque
+    from tb_produto
+    where id_produto = new.cd_produto
+    for update;
+
+    if not found then
+        raise exception 'produto % nao encontrado', new.cd_produto;
+    end if;
+
+    if v_estoque < new.nr_quantidade then
+        raise exception
+            'estoque insuficiente. disponivel: %, solicitado: %',
+            v_estoque, new.nr_quantidade;
+    end if;
+
+    new.vl_subtotal := v_valor * new.nr_quantidade;
+
+    update tb_produto
+    set nr_estoque = nr_estoque - new.nr_quantidade
+    where id_produto = new.cd_produto;
+
+    update tb_venda
+    set vl_total = vl_total + new.vl_subtotal
+    where id_venda = new.cd_venda;
+
+    return new;
+end;
+$$;
+
+
+-- =====================================================
+-- trigger
+-- =====================================================
+
+create trigger trg_controlar_estoque
+before insert on tb_item_venda
+for each row
+execute function fn_controlar_estoque();
+
+
+-- =====================================================
+-- inserts de vendas
+-- =====================================================
+
+insert into tb_venda (cd_usuario)
+values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+insert into tb_item_venda
+(cd_venda, cd_produto, nr_quantidade, vl_subtotal)
+values
+(1, 1, 1, 0),
+(1, 2, 2, 0),
+(2, 2, 2, 0),
+(2, 3, 3, 0),
+(3, 3, 3, 0),
+(3, 4, 2, 0),
+(4, 4, 2, 0),
+(4, 5, 1, 0),
+(5, 5, 1, 0),
+(5, 6, 2, 0),
+(6, 6, 2, 0),
+(6, 7, 1, 0),
+(7, 7, 1, 0),
+(7, 8, 2, 0),
+(8, 8, 2, 0),
+(8, 9, 1, 0),
+(9, 9, 1, 0),
+(9, 10, 2, 0),
+(10, 10, 2, 0),
+(10, 1, 1, 0);
+
+
+-- =====================================================
+-- view
+-- =====================================================
+
+create or replace view vw_relatorio_vendas as
+select
+    ven.id_venda,
+    usu.tx_nome as nome_cliente,
+    pro.tx_nome as nome_produto,
+    item.nr_quantidade,
+    pro.vl_valor as valor_unitario,
+    item.vl_subtotal,
+    ven.vl_total,
+    ven.dt_compra
+from tb_venda ven
+inner join tb_usuario usu
+    on usu.id_usuario = ven.cd_usuario
+inner join tb_item_venda item
+    on item.cd_venda = ven.id_venda
+inner join tb_produto pro
+    on pro.id_produto = item.cd_produto;
+
+-- =====================================================
+-- selects antes dos indexes
+-- =====================================================
+
+explain analyze
+select *
+from tb_venda
+where cd_usuario = 1;
+-- tempo: 0.120 ms
+
+explain analyze
+select
+    pet.id_pet,
+    pet.tx_nome as nome_pet,
+    pet.tx_raca,
+    pet.tx_sexo,
+    pet.vl_idade,
+    pet.vl_pesoKg,
+    ani.tx_descricao as especie,
+    usu.tx_nome as nome_proprietario,
+    usu.tx_email
+from tb_pet pet
+inner join tb_animal ani
+    on ani.id_animal = pet.cd_animal
+inner join tb_usuario usu
+    on usu.id_usuario = pet.cd_usuario
+where pet.cd_usuario = 1
+order by pet.tx_nome asc;
+-- tempo: 0.180 ms
+
+explain analyze
+select
+    pro.id_produto,
+    pro.tx_nome as produto,
+    pro.tx_dscricao as descricao,
+    cat.tx_categoria as categoria,
+    ani.tx_descricao as especie,
+    pro.vl_valor as preco,
+    pro.nr_estoque as estoque,
+    case
+        when pro.nr_estoque = 0 then 'indisponivel'
+        when pro.nr_estoque <= 5 then 'ultimas unidades'
+        else 'disponivel'
+    end as situacao_estoque
+from tb_produto pro
+inner join tb_categoriaproduto cat
+    on cat.id_categoriaproduto = pro.cd_categoria
+inner join tb_animal ani
+    on ani.id_animal = pro.cd_animal
+where pro.cd_animal = 1
+order by pro.vl_valor asc;
+-- tempo: 0.200 ms
+
+-- =====================================================
+-- criacao dos indexes
+-- =====================================================
+
+create index idx_venda_usuario
+on tb_venda(cd_usuario);
+
+create index idx_pet_usuario
+on tb_pet(cd_usuario);
+
+create index idx_produto_animal
+on tb_produto(cd_animal);
+
+create index idx_item_venda_venda
+on tb_item_venda(cd_venda);
+
+create index idx_item_venda_produto
+on tb_item_venda(cd_produto);
+
+-- =====================================================
+-- atualizacao das estatisticas
+-- =====================================================
+
+analyze tb_venda;
+analyze tb_pet;
+analyze tb_produto;
+analyze tb_item_venda;
+
+
+-- =====================================================
+-- selects depois dos indexes
+-- =====================================================
+
+explain analyze
+select *
+from tb_venda
+where cd_usuario = 1;
+
+-- tempo : 0.090 ms
+-- ((0.120 - 0.090) / 0.120) * 100
+-- melhoria: 25%
+
+explain analyze
+select
+    pet.id_pet,
+    pet.tx_nome as nome_pet,
+    pet.tx_raca,
+    pet.tx_sexo,
+    pet.vl_idade,
+    pet.vl_pesoKg,
+    ani.tx_descricao as especie,
+    usu.tx_nome as nome_proprietario,
+    usu.tx_email
+from tb_pet pet
+inner join tb_animal ani
+    on ani.id_animal = pet.cd_animal
+inner join tb_usuario usu
+    on usu.id_usuario = pet.cd_usuario
+where pet.cd_usuario = 1
+order by pet.tx_nome asc;
+
+-- tempo: 0.130 ms
+-- ((0.180 - 0.130) / 0.180) * 100
+-- melhoria: 27.78%
+
+explain analyze
+select
+    pro.id_produto,
+    pro.tx_nome as produto,
+    pro.tx_dscricao as descricao,
+    cat.tx_categoria as categoria,
+    ani.tx_descricao as especie,
+    pro.vl_valor as preco,
+    pro.nr_estoque as estoque,
+    case
+        when pro.nr_estoque = 0 then 'indisponivel'
+        when pro.nr_estoque <= 5 then 'ultimas unidades'
+        else 'disponivel'
+    end as situacao_estoque
+from tb_produto pro
+inner join tb_categoriaproduto cat
+    on cat.id_categoriaproduto = pro.cd_categoria
+inner join tb_animal ani
+    on ani.id_animal = pro.cd_animal
+where pro.cd_animal = 1
+order by pro.vl_valor asc;
+
+-- tempo: 0.150 ms
+-- ((0.200 - 0.150) / 0.200) * 100
+-- melhoria: 25%
+
+-- =====================================================
+-- papeis de acesso
+-- =====================================================
+
+create role papel_admin;
+
+create role papel_atendente;
+
+grant usage on schema public to papel_admin;
+
+grant all privileges
+on all tables in schema public
+to papel_admin;
+
+grant all privileges
+on all sequences in schema public
+to papel_admin;
+
+
+grant usage on schema public to papel_atendente;
+
+grant select
+on all tables in schema public
+to papel_atendente;
+
+grant insert
+on tb_usuario, tb_pet, tb_servico, tb_venda, tb_item_venda
+to papel_atendente;
+
+grant update
+on tb_usuario, tb_pet, tb_produto, tb_servico
+to papel_atendente;
+
+grant usage, select
+on all sequences in schema public
+to papel_atendente;
+
+
+create role usuario_administrador
+login password 'senha_admin_123';
+
+create role usuario_atendente
+login password 'senha_atendente_123';
+
+grant papel_admin to usuario_administrador;
+
+grant papel_atendente to usuario_atendente;
+
+
+-- =====================================================
+-- testes
+-- =====================================================
+
+select * from tb_tipouser;
+
+select * from tb_usuario;
+
+select * from tb_animal;
+
+select * from tb_pet;
+
+select * from tb_categoriaproduto;
+
+select * from tb_produto;
+
+select * from tb_servico;
+
+select * from tb_venda;
+
+select * from tb_item_venda;
+
+select * from vw_relatorio_vendas;
+
+select fn_total_compras_usuario(1);
+
+select
+    usu.tx_nome,
+    count(ven.id_venda) as quantidade_vendas,
+    sum(ven.vl_total) as total_gasto
+from tb_usuario usu
+inner join tb_venda ven
+    on ven.cd_usuario = usu.id_usuario
+group by usu.id_usuario, usu.tx_nome
+order by total_gasto desc;
+
+select
+    pro.tx_nome,
+    pro.nr_estoque
+from tb_produto pro
+order by pro.nr_estoque asc;
+
+select sum(vl_total) as faturamento_total
+from tb_venda;
+
+select
+    pro.tx_nome,
+    item.nr_quantidade,
+    item.vl_subtotal
+from tb_item_venda item
+inner join tb_produto pro
+    on pro.id_produto = item.cd_produto
+where item.cd_venda = 1;
